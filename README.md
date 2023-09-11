@@ -1,2 +1,1 @@
-# MLBProject
-MLB Data Analysis
+In this project, I analyzed datasets containing every player's stats from the 2022 MLB season...
