@@ -153,6 +153,74 @@ ax.set_yticks(y_ticks)
 plt.tight_layout()
 plt.show()
 ```
+
 ![Figure_2](https://github.com/seanh824/MLBProject/assets/140123586/63f75171-4b76-4f74-887f-e9a3cd35f355)
 
 There is an innings-pitched requirement for all players involved in the graph to combat outlier data while maintaining sufficient data for analysis. As expected, walks per 9 innings decreased with age across the board. Pitchers aged 35-40+ have a walks per 9 innings rate that is approximately 2/3 of a walk lower than pitchers aged 20-24. Over the course of a season, that rate decrease will make a noticeable difference. More traffic on the bases means more bullpen usage. Older pitchers' velocity may not age like wine, but generally speaking, their walk rate will. An unexpected result of this data visualization is that WHIP from all age groups did not change greatly. Similarly to how BA and OPS change over age, WHIP improves slightly from early 20s to late 20s and again from early 30s to late 30s. Overall, the theme of this graph suggests that in order to still be a viable pitcher late in your career you must limit the free passes. Not only does that help lower arguably the most important pitcher's stat in ERA, but it also allows pitchers to be more efficient and pitch deeper into games.
+
+## Availability Is the Best Ability?
+It is often said that a player who can remain on the field will play better due to finding their groove with routine reps. This ideology is often used by fans to will their teams into playing promising prospects day in and day out. To grasp fundamental statistics among players with varying games played the following code was produced:
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the CSV file
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv'
+data = pd.read_csv(file_path)
+
+# Define the bins for the 'G' column
+bins = [0, 30, 60, 90, 120, 150, 162]
+labels = ['0-30', '30-60', '60-90', '90-120', '120-150', '150-162']
+
+# Create a new column 'Game_Group' based on the 'G' column
+data['Game_Group'] = pd.cut(data['G'], bins=bins, labels=labels)
+
+# Calculate the average for 'BA', 'OBP', and 'SLG' for each group
+grouped_data = data.groupby('Game_Group')[['BA', 'OBP', 'SLG']].mean().reset_index()
+
+# Create the grouped bar chart
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Define colors for the bars
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c']
+
+# Create bars for each metric ('BA', 'OBP', 'SLG') for each group
+for i, metric in enumerate(['BA', 'OBP', 'SLG']):
+    ax.bar(
+        grouped_data.index + i * 0.2,  # Shift bars for different metrics
+        grouped_data[metric],
+        width=0.2,
+        label=metric,
+        color=colors[i]
+    )
+
+# Add values above each bar
+for i, v in enumerate(grouped_data.index):
+    for j, metric in enumerate(['BA', 'OBP', 'SLG']):
+        value = grouped_data.at[v, metric]
+        ax.text(v + j * 0.2, value + 0.005, f'{value:.3f}', ha='center')
+
+# Set y-axis labels with 2 trailing zeros
+ax.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, loc: f"{x:.3f}"))
+
+# Set x-axis labels
+ax.set_xticks(grouped_data.index + 0.2)
+ax.set_xticklabels(grouped_data['Game_Group'])
+
+# Set plot labels and title
+ax.set_xlabel('Games Played')
+ax.set_ylabel('Batting Statistic')
+ax.set_title('Batting Statistics by Games Played (2022)')
+
+# Add legend
+ax.legend()
+
+# Show the plot
+plt.tight_layout()
+plt.show()
+```
+
+![Figure_3](https://github.com/seanh824/MLBProject/assets/140123586/f556706b-3978-48be-99ac-686cc35ad899)
+
+The games played groups can be thought of as months played in the season, from less than 1 month to all 6 months. Ultimately the three metrics, BA, OBP, and SLG, all increased steadily for all games played groups. The 0-30 games played group's BA, OBP, and SLG are head and shoulders below the other 5 groups' averages, potentially a sign of skewed player data due to the small sample size. From group 30-60 games played to group 150-162 games played BA, OBP, and SLG all increased by ~0.10-0.20 for every group. Excluding the 0-30 games played group, the difference in statistical averages from 30-60 and 150-162 games played is the same difference between a replacement-level player and an above-average player. The message of this visualization is clear - baseball is a very routine-dependent sport with comfortability and confidence gained through playing time.
