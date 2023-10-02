@@ -4,6 +4,7 @@ In the ever-evolving world of Major League Baseball, a comprehensive analysis of
 ## Youth Movement
 In recent years, Major League Baseball has witnessed a transformative shift towards a game that emphasizes youth and athleticism. Teams are increasingly focusing on scouting and developing young talents who bring speed, agility, and dynamic athleticism to the field. This evolution not only enhances the overall excitement of the sport but also underscores the importance of adaptability in a rapidly changing baseball landscape, where younger, more athletic players are driving the future of America's pastime.
 
+'''python
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -70,6 +71,7 @@ annotate_bars(bar3)
 # Show the plot
 plt.tight_layout()
 plt.show()
+'''
 
 ![Figure_1](https://github.com/seanh824/MLBProject/assets/140123586/e659dafb-74cd-45c9-8377-849511c92383)
 
