@@ -158,7 +158,7 @@ plt.show()
 
 There is an innings-pitched requirement for all players involved in the graph to combat outlier data while maintaining sufficient data for analysis. As expected, walks per 9 innings decreased with age across the board. Pitchers aged 35-40+ have a walks per 9 innings rate that is approximately 2/3 of a walk lower than pitchers aged 20-24. Over the course of a season, that rate decrease will make a noticeable difference. More traffic on the bases means more bullpen usage. Older pitchers' velocity may not age like wine, but generally speaking, their walk rate will. An unexpected result of this data visualization is that WHIP from all age groups did not change greatly. Similarly to how BA and OPS change over age, WHIP improves slightly from early 20s to late 20s and again from early 30s to late 30s. Overall, the theme of this graph suggests that in order to still be a viable pitcher late in your career you must limit the free passes. Not only does that help lower arguably the most important pitcher's stat in ERA, but it also allows pitchers to be more efficient and pitch deeper into games.
 
-## Availability Is the Best Ability?
+## The Best Ability Is Availability
 It is often said that a player who can remain on the field will play better due to finding their groove with routine reps. This ideology is often used by fans to will their teams into playing promising prospects day in and day out. To grasp fundamental statistics among players with varying games played the following code was produced:
 
 ```python
