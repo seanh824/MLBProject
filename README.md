@@ -1,5 +1,5 @@
 # 2022 MLB Season in Review: Player & Payroll Analysis
-In the ever-evolving world of Major League Baseball, a comprehensive analysis of player statistics is essential to understanding the dynamic performance trends of the game. In this data-driven project, I delve into the statistical prowess of MLB players during the 2022 season. Leveraging a rich dataset comprising player performance metrics such as BA, OPS, and OBP, to pitching statistics like ERA, WHIP, and K%, I aim to unravel the standout performers and key insights that defined the season, while accounting for each team's playoff result. To explore the complete dataset, please click [here.](https://www.kaggle.com/datasets/vivovinco/2022-mlb-player-stats) The data was additionally validated to match its source - [baseballamerica.](https://www.baseball-reference.com/) 
+In the ever-evolving world of Major League Baseball, a comprehensive analysis of player statistics is essential to understanding the dynamic performance trends of the game. In this data-driven project, I delve into the statistical prowess of MLB players during the 2022 season. Leveraging a rich dataset comprising of every single player and their batting metrics such as BA, OPS, and OBP, as well as their pitching statistics like ERA, WHIP, and K%, I aim to unravel the standout performers and key insights that defined the season, while accounting for each team's playoff result. To explore the complete dataset, please click [here.](https://www.kaggle.com/datasets/vivovinco/2022-mlb-player-stats) The data was additionally validated to match its source - [baseballamerica.](https://www.baseball-reference.com/) 
 
 ## Batting Stats by Age
 In recent years, Major League Baseball has witnessed a transformative shift towards a game that emphasizes youth and athleticism. Teams are increasingly focusing on scouting and developing young talents who bring speed, agility, and dynamic athleticism to the field. This evolution not only enhances the overall excitement of the sport but also underscores the importance of adaptability in a rapidly changing baseball landscape, where younger, more athletic players are driving the future of America's pastime. In order to understand fundamental statistics among differing stages of a player's career the following code was written:
@@ -369,9 +369,159 @@ print(team_counts)
 
 Qualifying players must have played at least half the season or 81 games, so teams with four or fewer 100+ OPS+ players are expected to be poor, which is the case. Even though Juan Soto qualified as a National it's surprising to see Washington have 5 players with an OPS+ of 100+. The Blue Jays have the most 100+ OPS+ players in baseball (8) and the Red Sox are tied for second with 7 such players despite both not winning the AL East. The team that did win the division, the Yankees, had the fewest number of 100+ OPS+ players among AL East teams. This is more of a testament to the type of division the AL East is rather than a knock on the Yankees' division win.
 
-## Regular Season Payroll-to-Win Ratio with Postseason Outcome
+## Batting Stats by Division
+It's well reported that the best division is the AL East, but how do other divisions compare? How do weak divisions with one or two great teams average out? That is quite an interesting proposition because what makes the AL East, nicknamed the "AL Beast", such a strong division is that all teams are either average or very good. Other divisions like the AL Central have average teams and very, very bad teams. The fundamental BA, OBP, and OPS metrics were averaged out per each division using the 'Tm' column's team code and mapping it to the team's respective division label:   
 
-[Figure_9.pdf](https://github.com/seanh824/MLBProject/files/12789048/Figure_9.pdf)
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
+import numpy as np
 
+# Load the dataset
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv'
+data = pd.read_csv(file_path)
+
+# Define the team-to-division mapping
+division_mapping = {
+    'NYY': 'AL East',
+    'BOS': 'AL East',
+    'TBR': 'AL East',
+    'TOR': 'AL East',
+    'BAL': 'AL East',
+    'NYM': 'NL East',
+    'WSN': 'NL East',
+    'ATL': 'NL East',
+    'MIA': 'NL East',
+    'PHI': 'NL East',
+    'CLE': 'AL Central',
+    'MIN': 'AL Central',
+    'DET': 'AL Central',
+    'KCR': 'AL Central',
+    'CHW': 'AL Central',
+    'MIL': 'NL Central',
+    'CHC': 'NL Central',
+    'CIN': 'NL Central',
+    'PIT': 'NL Central',
+    'STL': 'NL Central',
+    'HOU': 'AL West',
+    'TEX': 'AL West',
+    'SEA': 'AL West',
+    'LAA': 'AL West',
+    'OAK': 'AL West',
+    'LAD': 'NL West',
+    'ARI': 'NL West',
+    'SFG': 'NL West',
+    'SDP': 'NL West',
+    'COL': 'NL West'
+}
+
+# Map the teams to divisions
+data['Division'] = data['Tm'].map(division_mapping)
+
+# Group the data by division and calculate the average for 'BA', 'OBP', and 'OPS'
+division_stats = data.groupby('Division')[['BA', 'OBP', 'OPS']].mean()
+
+# Create a column chart
+fig, ax = plt.subplots(figsize=(12, 6))
+n = len(division_stats)
+width = 0.2
+x = np.arange(n)
+colors = ['b', 'g', 'r']
+index = 0
+
+for stat in ['BA', 'OBP', 'OPS']:
+    ax.bar(x + width * index, division_stats[stat], width=width, label=stat)
+    index += 1
+
+# Define a custom y-axis formatter to add 1 trailing zero
+def custom_formatter(x, pos):
+    return f'{x:.2f}0'
+
+# Apply the custom formatter to the y-axis
+ax.yaxis.set_major_formatter(FuncFormatter(custom_formatter))
+
+# Add the actual values above each bar
+for i in range(n):
+    for j, stat in enumerate(['BA', 'OBP', 'OPS']):
+        value = division_stats.at[division_stats.index[i], stat]
+        ax.text(i + width * j, value + 0.01, f'{value:.3f}', ha='center', va='bottom', fontsize=10)
+
+ax.set_xlabel('Division')
+ax.set_ylabel('Batting Statistic Value')
+ax.set_title('BA, OBP, OPS by Division (2022)')
+ax.set_xticks(x + width)
+ax.set_xticklabels(division_stats.index)
+ax.legend(title='Statistics', loc='upper right')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+```
 
 ![Figure_9](https://github.com/seanh824/MLBProject/assets/140123586/f32b6a17-7420-4025-b92f-499c629cdf75)
+
+This data does not have a qualifying PA or AB metric, so the BA, OBP, and OPS for each division are all much lower than normal and cannot be taken out of context. However, by not filtering outliers from any group, it ensures that each group is subjected to the same data processing steps, which can make the comparing divisions' stats fair and unbiased. The AL East is confirmed as MLB's best division top to bottom. The AL East's average OPS was 0.040 points higher than the next closest division (NL Central). That is unexpected in and of itself - the NL Central has the second-best average OPS of all divisions. What is expected is what division had the worst average OPS, the AL Central, almost 0.100 points lower than the AL East. Each division can be summarized like so: the AL Central is average to dreadful, the AL East is by far the best division in the league, the AL West and NL Central are both decent with a mix of competitive teams and consistent tankers, the NL East has an even more dramatic difference between its good and bad teams, which is even more pronounced in the NL West as the Dodgers are the only well above average team.
+
+## The Coors Field Effect
+Playing at Coors Field is portrayed as a batter's dream due to the ball traveling further. Players on the Rockies can be viewed from a different prism because half of all their games are played with a ball that has significantly less drag. Coors Field's deep outfield and high fences help reduce the number of home runs hit, but with a larger outfield comes more ground to cover for outfielders. This turns fly-outs into bloop singles and doubles into triples. I would expect to see the Rockies with much higher averages for all three metrics analyzed: BA, OBP, and OPS. 
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the data from the CSV file
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv'
+data = pd.read_csv(file_path)
+
+# Filter the data for 'COL' team and PA >= 100
+col_data = data[(data['Tm'] == 'COL') & (data['PA'] >= 100)]
+
+# Calculate averages for 'BA', 'OBP', and 'OPS' for 'COL' team
+col_avg = col_data[['BA', 'OBP', 'OPS']].mean()
+
+# Filter the data for non-'COL' and non-'TOT' teams and PA >= 100
+mlb_without_col_data = data[(data['Tm'] != 'COL') & (data['Tm'] != 'TOT') & (data['PA'] >= 100)]
+
+# Calculate averages for 'BA', 'OBP', and 'OPS' for non-'COL' and non-'TOT' teams
+mlb_without_col_avg = mlb_without_col_data[['BA', 'OBP', 'OPS']].mean()
+
+# Create a grouped bar chart
+categories = ['BA', 'OBP', 'OPS']
+col_values = col_avg.values
+mlb_without_col_values = mlb_without_col_avg.values
+width = 0.35
+x = range(len(categories))
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x, col_values, width, label='COL')
+rects2 = ax.bar([i + width for i in x], mlb_without_col_values, width, label='MLB (w/o COL)')
+
+# Set the y-axis ticks and limit
+ax.set_yticks([i * 0.025 for i in range(0, 33)])
+ax.set_ylim(0, 0.725)
+
+# Annotate bars with actual values
+for rects in [rects1, rects2]:
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate(f'{height:.3f}', xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3), textcoords='offset points', ha='center', va='bottom')
+
+# Set labels and title
+ax.set_xlabel('Metrics')
+ax.set_ylabel('Average')
+ax.set_title('Batting Statistics of Colorado Rockies vs. Rest of MLB (2022)')
+ax.set_xticks([i + width / 2 for i in x])
+ax.set_xticklabels(categories)
+ax.legend()
+
+plt.tight_layout()
+plt.show()
+```
+
+![Figure_7](https://github.com/seanh824/MLBProject/assets/140123586/3a72241c-23cf-471d-8bb9-1e5d1fdbe7fa)
+
+The hypothesized difference is not nearly as large as the actual result, this can be attributed to the fact that the Rockies were one of the worst teams in 2022. For a rebuilding team, the Rockies can only benefit so much from playing half their games with 20% less atmospheric pressure. Even still the Rockies' average OBP and OPS were ever so slightly higher than the average for the rest of MLB (w/o the Rockies) combined. The MLB average BA (excluding the Rockies) was around 0.010 points lower than the Rockies team BA.
+
+## Relationship Between SO:BB Ratio & WHIP
+Figure 8 text here
