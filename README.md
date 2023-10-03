@@ -369,3 +369,9 @@ print(team_counts)
 
 Qualifying players must have played at least half the season or 81 games, so teams with four or fewer 100+ OPS+ players are expected to be poor, which is the case. Even though Juan Soto qualified as a National it's surprising to see Washington have 5 players with an OPS+ of 100+. The Blue Jays have the most 100+ OPS+ players in baseball (8) and the Red Sox are tied for second with 7 such players despite both not winning the AL East. The team that did win the division, the Yankees, had the fewest number of 100+ OPS+ players among AL East teams. This is more of a testament to the type of division the AL East is rather than a knock on the Yankees' division win.
 
+## Regular Season Payroll-to-Win Ratio with Postseason Outcome
+
+[Figure_9.pdf](https://github.com/seanh824/MLBProject/files/12789048/Figure_9.pdf)
+
+
+![Figure_9](https://github.com/seanh824/MLBProject/assets/140123586/f32b6a17-7420-4025-b92f-499c629cdf75)
