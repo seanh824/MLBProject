@@ -224,3 +224,124 @@ plt.show()
 ![Figure_3](https://github.com/seanh824/MLBProject/assets/140123586/f556706b-3978-48be-99ac-686cc35ad899)
 
 The games played groups can be thought of as months played in the season, from less than 1 month to all 6 months. Ultimately the three metrics, BA, OBP, and SLG, all increased steadily for all games played groups. The 0-30 games played group's BA, OBP, and SLG are head and shoulders below the other 5 groups' averages, potentially a sign of skewed player data due to the small sample size. From group 30-60 games played to group 150-162 games played BA, OBP, and SLG all increased by ~0.10-0.20 for every group. Excluding the 0-30 games played group, the difference in statistical averages from 30-60 and 150-162 games played is the same difference between a replacement-level player and an above-average player. The message of this visualization is clear - baseball is a very routine-dependent sport with comfortability and confidence gained through playing time.
+
+## Regular Season Payroll-to-Win Ratio with Postseason Outcome
+The key to MLB roster construction according to previous data visualizations is young players who play a large majority of the season. Veterans can also provide leadership and guide young players into quality major leaguers. Another way to supplement talent in lieu of developing players is by signing free agents. The more a team spends in MLB's luxury tax system the worse their draft pick and taxes are, so spending wisely is encouraged.
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+from collections import OrderedDict
+
+# Define the color mapping for teams
+team_colors = {
+    'HOU': 'red',
+    'PHI': 'yellow',
+    'NYY': 'green',
+    'SDP': 'green',
+    'CLE': 'blue',
+    'ATL': 'blue',
+    'SEA': 'blue',
+    'LAD': 'blue',
+    'TBR': 'purple',
+    'TOR': 'purple',
+    'NYM': 'purple',
+    'STL': 'purple',
+    'ARI': 'gray',
+    'BAL': 'gray',
+    'BOS': 'gray',
+    'CHC': 'gray',
+    'CHW': 'gray',
+    'CIN': 'gray',
+    'COL': 'gray',
+    'DET': 'gray',
+    'KCR': 'gray',
+    'LAA': 'gray',
+    'MIA': 'gray',
+    'MIL': 'gray',
+    'MIN': 'gray',
+    'OAK': 'gray',
+    'PIT': 'gray',
+    'SFG': 'gray',
+    'TEX': 'gray',
+    'WSN': 'gray'
+}
+
+# Define labels for the legend
+legend_labels = {
+    'red': 'Won World Series',
+    'yellow': 'Lost World Series',
+    'green': 'Lost Championship Series',
+    'blue': 'Lost Division Series',
+    'purple': 'Lost Wild Card Series',
+    'gray': 'No Postseason Berth'
+}
+
+# Read the CSV file
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Payroll.csv'
+df = pd.read_csv(file_path)
+
+# Add a color column based on the team_colors mapping
+df['Color'] = df['Team'].map(team_colors)
+
+# Define the custom order for sorting
+custom_order = ['red', 'yellow', 'green', 'blue', 'purple', 'gray']
+
+# Convert the 'Color' column to a categorical data type with the custom order
+df['Color'] = pd.Categorical(df['Color'], categories=custom_order, ordered=True)
+
+# Sort the DataFrame first by color, then by decreasing total wins
+df = df.sort_values(by=['Color', 'Total Wins'], ascending=[True, False])
+
+# Create a new figure and axis
+fig, ax = plt.subplots()
+
+# Create an OrderedDict to store unique legend labels
+legend_handles = OrderedDict()
+
+# Plot the bars with specified colors and labels
+for index, row in df.iterrows():
+    dollars_per_win = row['Dollars/Win']
+    total_wins = row['Total Wins']
+    color = row['Color']
+    team = row['Team']
+    label = legend_labels[color]
+    
+    # Add the first occurrence of each color to the legend
+    if color not in legend_handles:
+        legend_handles[color] = ax.bar(dollars_per_win, total_wins, color=color, label=label)
+    else:
+        ax.bar(dollars_per_win, total_wins, color=color)
+
+# Set axis labels and title
+ax.set_xlabel('Dollars/Win')
+ax.set_ylabel('Regular Season Win Total')
+ax.set_title('Money Spent Per Regular Season Win with Postseason Outcome (2022)')
+
+# Set y-axis scale to 5
+ax.set_yticks(range(0, max(df['Total Wins']) + 6, 5))
+
+# Rotate the x-axis labels vertically
+plt.xticks(rotation=90)
+
+# Add labels above each bar
+for index, row in df.iterrows():
+    dollars_per_win = row['Dollars/Win']
+    total_wins = row['Total Wins']
+    team = row['Team']
+    ax.text(dollars_per_win, total_wins + 0.5, team, ha='center', va='bottom')
+
+# Add the legend to the top right
+ax.legend(handles=legend_handles.values(), labels=legend_labels.values(), loc='upper right')
+
+# Display the plot
+plt.show()
+```
+
+![Figure_4](https://github.com/seanh824/MLBProject/assets/140123586/34d888fc-2522-45f9-a37b-dd36c8b9b2f3)
+
+Free agent spending is critical for not just regular season outcomes but the implication they have on postseason seeding. A team's postseason seed can ultimately change their route to a World Series, for better or worse. If a team's payroll influences their regular season outcome and subsequent postseason seeding, can teams buy a World Series? This was a question that plagued MLB for years and played a part in the luxury tax system we see today.
+
+The biggest losers according to this graph are the White Sox, Red Sox, and Giants. They all failed to make the postseason while spending more per win than half the teams that made the postseason. The biggest winners are the Astros, Guardians, and Orioles. The Astros evidently won on multiple levels; they had the second-best record in the regular season, spent towards the bottom per win among postseason teams, and won the World Series. A cost-effective championship-caliber team that also dominated the regular season. The Orioles 2022 season was successful due to contending for the postseason with the lowest money spent per regular season win in the league. Among postseason teams, the Guardians spent the fewest per regular season win, making their ticket to the fall classic the most cost-effective. Teams with low payrolls are viewed as having a lower desire to win, so if they either contend for or even make the postseason their season is automatically a win. Throughout the Astros' last decade of postseason runs, their payroll has never been in the top three of the league. Some teams had average results in relation to spending and postseason outcomes. The Phillies had a confusing season, they played like a borderline playoff team in the regular season but spent like a team that went as far as they ended up going. Considering the Padres and Yankees' 2022 expectations and payroll, their postseason results were slightly underwhelming. They had some of the highest payroll-to-win ratios among postseason teams. All in all, buying championships may have been a thing of the past but that's all it is now - a thing of the past. Simply spending more than other teams is not the only way to construct a competent roster.
+
+## Number of Players with OPS+ ≥ 100 by Team
