@@ -521,7 +521,7 @@ plt.show()
 
 ![Figure_7](https://github.com/seanh824/MLBProject/assets/140123586/3a72241c-23cf-471d-8bb9-1e5d1fdbe7fa)
 
-The hypothesized difference is not nearly as large as the actual result, this can be attributed to the fact that the Rockies were one of the worst teams in 2022. For a rebuilding team, the Rockies can only benefit so much from playing half their games with 20% less atmospheric pressure. Even still the Rockies' average OBP and OPS were ever so slightly higher than the average for the rest of MLB (w/o the Rockies) combined. The MLB average BA (excluding the Rockies) was around 0.010 points lower than the Rockies team BA.
+The hypothesized difference is not nearly as large as the actual result, this can be attributed to the fact that the Rockies were one of the worst teams in 2022. For a rebuilding team, the Rockies can only benefit so much from playing half their games with 20% less atmospheric pressure. Even still the Rockies' average OBP and OPS were ever so slightly higher than the average for the rest of MLB (w/o the Rockies) combined. The MLB average BA (excluding the Rockies) was around 0.010 points lower than the Rockies team BA, which is not _nothing_.
 
 ## Relationship Between SO:BB Ratio & WHIP
 Figure 8 text here
