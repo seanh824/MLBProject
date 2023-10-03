@@ -345,3 +345,27 @@ Free agent spending is critical for not just regular season outcomes but the imp
 The biggest losers according to this graph are the White Sox, Red Sox, and Giants. They all failed to make the postseason while spending more per win than half the teams that made the postseason. The biggest winners are the Astros, Guardians, and Orioles. The Astros evidently won on multiple levels; they had the second-best record in the regular season, spent towards the bottom per win among postseason teams, and won the World Series. A cost-effective championship-caliber team that also dominated the regular season. The Orioles 2022 season was successful due to contending for the postseason with the lowest money spent per regular season win in the league. Among postseason teams, the Guardians spent the fewest per regular season win, making their ticket to the fall classic the most cost-effective. Teams with low payrolls are viewed as having a lower desire to win, so if they either contend for or even make the postseason their season is automatically a win. Throughout the Astros' last decade of postseason runs, their payroll has never been in the top three of the league. Some teams had average results in relation to spending and postseason outcomes. The Phillies had a confusing season, they played like a borderline playoff team in the regular season but spent like a team that went as far as they ended up going. Considering the Padres and Yankees' 2022 expectations and payroll, their postseason results were slightly underwhelming. They had some of the highest payroll-to-win ratios among postseason teams. All in all, buying championships may have been a thing of the past but that's all it is now - a thing of the past. Simply spending more than other teams is not the only way to construct a competent roster.
 
 ## Number of Players with OPS+ ≥ 100 by Team
+While we previously highlighted the potential dangers of spending large amounts of money, there is a reason teams still do it, and it's mainly due to the roster depth increased spending facilities. Teams can spend money to fill holes and reduce the number of everyday starters with a below-average fundamental batting statistic in OPS+. Do better teams automatically have more 100+ OPS+ players than others? 
+
+```python
+import pandas as pd
+
+# Read the CSV file into a pandas DataFrame
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv'
+df = pd.read_csv(file_path)
+
+# Filter the data based on the specified conditions (81 or more in 'G' and 100 or more in 'OPS+')
+filtered_df = df[(df['G'] >= 81) & (df['OPS+'] >= 100)]
+
+# Group the filtered data by the 'Tm' column and count the number of players for each team
+team_counts = filtered_df['Tm'].value_counts().reset_index()
+team_counts.columns = ['Team', 'Number of Players']
+
+# Display the result
+print(team_counts)
+```
+
+[Figure_5.pdf](https://github.com/seanh824/MLBProject/files/12788889/Figure_5.pdf)
+
+Qualifying players must have played at least half the season or 81 games, so teams with four or fewer 100+ OPS+ players are expected to be poor, which is the case. Even though Juan Soto qualified as a National it's surprising to see Washington have 5 players with an OPS+ of 100+. The Blue Jays have the most 100+ OPS+ players in baseball (8) and the Red Sox are tied for second with 7 such players despite both not winning the AL East. The team that did win the division, the Yankees, had the fewest number of 100+ OPS+ players among AL East teams. This is more of a testament to the type of division the AL East is rather than a knock on the Yankees' division win.
+
