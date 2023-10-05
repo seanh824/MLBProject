@@ -524,4 +524,279 @@ plt.show()
 The hypothesized difference is not nearly as large as the actual result, this can be attributed to the fact that the Rockies were one of the worst teams in 2022. For a rebuilding team, the Rockies can only benefit so much from playing half their games with 20% less atmospheric pressure. Even still the Rockies' average OBP and OPS were ever so slightly higher than the average for the rest of MLB (w/o the Rockies) combined. The MLB average BA (excluding the Rockies) was around 0.010 points lower than the Rockies team BA, which is not _nothing_.
 
 ## Relationship Between SO:BB Ratio & WHIP
-Figure 8 text here
+Generally, one of the best ways to limit damage as a pitcher is through the strikeout, which is especially true at Coors Field. The higher a pitcher's WHIP the higher the odds those runs score, inflating their ERA. Evidently, walks are part of the WHIP statistic, but not necessarily is SO:BB ratio. A player can have a low SO:BB ratio and also a low WHIP, they simply may just not be a strikeout pitcher. With that being said, a high SO:BB walk ratio is usually accompanied by a low WHIP. A pitcher with a lot of strikeouts inherently lowers their opponent's chances of getting a walk or hit. To determine how correlated SO:BB ratio is with WHIP the following code was written:  
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Define the path to your CSV file
+csv_file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Pitching.csv'
+
+# Load the CSV data into a Pandas DataFrame
+df = pd.read_csv(csv_file_path)
+
+# Filter rows with 'IP' values of 20 or more
+df = df[df['IP'] >= 20]
+
+# Filter out rows with missing or invalid data in 'SO/BB' and 'WHIP' columns 
+df = df.dropna(subset=['SO/BB', 'WHIP'])
+
+# Extract the 'SO/BB' and 'WHIP' columns
+so_bb = df['SO/BB']
+whip = df['WHIP']
+
+# Calculate the correlation coefficient
+correlation_coefficient = so_bb.corr(whip)
+
+# Create a scatter plot
+plt.figure(figsize=(8, 6))
+plt.scatter(so_bb, whip, label=f'Correlation = {correlation_coefficient:.2f}')
+plt.xlabel('SO:BB Ratio')
+plt.ylabel('WHIP')
+
+# Calculate the line of best fit
+slope, intercept = np.polyfit(so_bb, whip, 1)
+plt.plot(so_bb, slope * so_bb + intercept, color='red', linestyle='--', label='Line of Best Fit')
+
+# Add a legend
+plt.legend()
+
+# Show the plot
+plt.title('Relationship Between SO:BB Ratio and WHIP in 2022 MLB Season (min. 20 IP)')
+plt.grid(True)
+plt.show()
+```
+
+![Figure_8](https://github.com/seanh824/MLBProject/assets/140123586/c9e1f108-28c3-4bae-8c21-4ab8431fd79d)
+
+In order to produce this scatter plot, the code ran through a new column that was created with an if error division formula that left any player's SO:BB ratio value blank if they failed to record a walk. This also essentially doubled as an innings-pitched requirement. The syntax of the formula used for the first row in the new column is as follows: =IFERROR(W2/U2, ""). There is a clear relationship between the two statistics, yet not as strong as expected. The correlation coefficient is only -0.54, suggesting strikeouts reduce traffic on the bases and subsequent WHIP values, but so can other methods. The ideology of pitching to contact is most definitely viable in today's game. It may not be as prevalent as in years past but pitching to contact reduces pitch counts and is particularly useful for older pitchers with diminished velocity.    
+
+## Every Team's Best Hitter by OPS+
+A major reason why the 2022 MLB season preceded the most significant rule changes the game had ever seen was because offenses across the league were historically down. In 2023, MLB banned the shift and made the bases bigger in an attempt to stimulate offenses. One way to analyze a team's offensive output is to determine who their best player was going into the year and who finished the year with their team's highest OPS+. This was accomplished with the following code, the list of every team's highest OPS+ player was then transferred to a new spreadsheet:
+
+```python
+import pandas as pd
+
+# Read the CSV file into a DataFrame
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv'
+df = pd.read_csv(file_path)
+
+# Filter the DataFrame for players with 'G' >= 81 and 'Tm' not equal to 'TOT'
+df_filtered = df[(df['G'] >= 81) & (df['Tm'] != 'TOT')]
+
+# Group the filtered DataFrame by 'Tm' (team) and find the player with the max 'OPS+' in each group
+result = df_filtered.groupby('Tm').apply(lambda group: group[group['OPS+'] == group['OPS+'].max()])
+
+# Reset the index to get rid of the multi-index
+result = result.reset_index(drop=True)
+
+# Display the resulting DataFrame
+print(result[['Tm', 'Name', 'OPS+', 'G']])
+```
+
+![Figure_9](https://github.com/seanh824/MLBProject/assets/140123586/b6c4fd62-df9a-4ecd-bc2f-17b45ec0e5c0)
+
+This table is sorted by OPS+ and the games played column is conditional formatted so that the red becomes progressively darker as games played increases. In other words, the darker the red the more stock you can put into the OPS+ statistic. All players were required to appear in 81 games or half the season. Overall, most of the brand names are here with five players surprisingly making the list: C.J. Cron, Eric Haase, Hunter Renfroe, Nathaniel Lowe, and Austin Riley. I expected Kris Bryant instead of C.J. Cron, Javier Baez instead of Eric Haase, Christian Yelich instead of Hunter Renfroe, Corey Seager instead of Nathaniel Lowe, and Ronald Acuna Jr. instead of Austin Riley. Acuna Jr. was still not 100% due to his torn ACL in 2021 and Kris Bryant dealt with back and foot injuries all year, but Yelich, Baez, and Seager all have no excuses. While this analysis was fascinating and can identify which superstars delivered and which ones didn't, it by no means outlines an entire team's offensive performance. 
+
+## Three True Outcomes Rate by Team
+We know that offensive performances in the years leading up to and including 2022 prompted the rule changes seen in 2023. An underlying part of these offensive struggles can attributed to how often players fall victim to the three true outcomes. The three true outcomes refer to strikeouts, walks, or home runs. These outcomes present themselves more in the postseason, as there is better pitching and the few mistakes that are made are either balls that produce walks or pitches left over the plate producing home runs. Rarely are multiple hits strung together in the postseason, making a team's three true outcomes rate important yet tricky to interpret. Too many walks and strikeouts will not move runners over to manufacture runs, but too few home runs will also make it hard to push runs across. Thus, a middle-of-the-pack three true outcome rate is best. Each team was color-coded to indicate where they finished in the postseason and although these three true outcome rates are from the 2022 regular season, they still are a valid litmus test of how a team may subsequently perform in the postseason.
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the CSV file into a DataFrame
+file_path = "/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv"
+df = pd.read_csv(file_path)
+
+# Filter out rows with 'TOT' in the 'Tm' column
+df = df[df['Tm'] != 'TOT']
+
+# Group the data by team and calculate the sum of HR, SO, BB, and PA for each team
+team_stats = df.groupby('Tm').agg({'HR': 'sum', 'SO': 'sum', 'BB': 'sum', 'PA': 'sum'}).reset_index()
+
+# Calculate the True Outcome percentages for each team
+team_stats['True_Outcome_Rate'] = (team_stats['HR'] + team_stats['SO'] + team_stats['BB']) / team_stats['PA'] * 100
+
+# Define color mapping for each team
+team_colors = {
+    'HOU': 'red',
+    'PHI': 'yellow',
+    'NYY': 'green',
+    'SDP': 'green',
+    'CLE': 'blue',
+    'ATL': 'blue',
+    'SEA': 'blue',
+    'LAD': 'blue',
+    'TBR': 'purple',
+    'TOR': 'purple',
+    'NYM': 'purple',
+    'STL': 'purple',
+    'ARI': 'gray',
+    'BAL': 'gray',
+    'BOS': 'gray',
+    'CHC': 'gray',
+    'CHW': 'gray',
+    'CIN': 'gray',
+    'COL': 'gray',
+    'DET': 'gray',
+    'KCR': 'gray',
+    'LAA': 'gray',
+    'MIA': 'gray',
+    'MIL': 'gray',
+    'MIN': 'gray',
+    'OAK': 'gray',
+    'PIT': 'gray',
+    'SFG': 'gray',
+    'TEX': 'gray',
+    'WSN': 'gray'
+}
+
+# Define labels for the legend
+legend_labels = {
+    'red': 'Won World Series',
+    'yellow': 'Lost World Series',
+    'green': 'Lost Championship Series',
+    'blue': 'Lost Division Series',
+    'purple': 'Lost Wild Card Series',
+    'gray': 'No Postseason Berth'
+}
+
+# Sort the DataFrame by the order of the color mapping
+team_stats['Color_Order'] = [list(team_colors.keys()).index(team) for team in team_stats['Tm']]
+team_stats = team_stats.sort_values(by='Color_Order').drop(columns=['Color_Order'])
+
+# Create a bar graph of True Outcome rates for each team
+plt.figure(figsize=(12, 6))
+bars = plt.bar(team_stats['Tm'], team_stats['True_Outcome_Rate'], color=[team_colors.get(team, 'gray') for team in team_stats['Tm']])
+plt.xlabel('Team')
+plt.ylabel('Three True Outcomes Rate (%)')
+plt.title('Three True Outcomes Rate by Team (2022)')
+plt.xticks(rotation=90)
+
+# Add actual values above the bars
+for bar, value in zip(bars, team_stats['True_Outcome_Rate']):
+    plt.text(bar.get_x() + bar.get_width() / 2, value + 1, str(round(value, 2)), ha='center', va='bottom')
+
+# Set the y-axis maximum value to 40
+plt.ylim(0, 40)
+
+# Add the legend to the side of the bar graph on the right
+legend_handles = [plt.Rectangle((0, 0), 1, 1, color=color) for color in legend_labels.keys()]
+legend_labels_list = [label for label in legend_labels.values()]
+plt.legend(legend_handles, legend_labels_list, title="Legend", loc="center left", bbox_to_anchor=(1, 0.5))
+
+plt.tight_layout()
+
+# Show the bar graph
+plt.show()
+```
+
+![Figure_10](https://github.com/seanh824/MLBProject/assets/140123586/a7c77f9b-3b76-45d1-bace-cf5564496c1f)
+
+The Guardians' three true outcomes rate is the lowest among not only postseason teams but the league as a whole. This supports the theme of the 2022 Cleveland Guardians - a scrappy, put-the-ball-in-play team. What they failed to do and what makes this statistic a balancing act is hit home runs. The Guardians hit the fewest home runs in 2022. Meanwhile, the Yankees hit the most home runs in 2022 and finished with the highest three true outcome rate among all teams. This rate is only a fraction higher than a few teams and is skewed by Aaron Judge's historic 62 home run season. Ultimately these points still stand, the Guardians failed to advance further in the postseason because they did not hit enough home runs and lacked general slugging power, home run or not. The Yankees were too reliant on the home run and when they didn't homer, they didn't make as many productive outs nor put the ball in play. Obviously, there are several factors that predict postseason performance, but the three true outcomes rate is definitely one of them. 
+
+## Regular Season Team ERAs with Postseason Outcome
+It is often said that in the playoffs good pitching will always triumph over good hitting. So in this graph of every team's regular season ERA, I again color code each team by their placement in the 2022 MLB postseason.
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the CSV file into a DataFrame
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Pitching.csv'
+data = pd.read_csv(file_path)
+
+# Mapping of team codes to colors
+team_colors = {
+    'HOU': 'red',
+    'PHI': 'yellow',
+    'NYY': 'green',
+    'SDP': 'green',
+    'CLE': 'blue',
+    'ATL': 'blue',
+    'SEA': 'blue',
+    'LAD': 'blue',
+    'TBR': 'purple',
+    'TOR': 'purple',
+    'NYM': 'purple',
+    'STL': 'purple',
+    'ARI': 'gray',
+    'BAL': 'gray',
+    'BOS': 'gray',
+    'CHC': 'gray',
+    'CHW': 'gray',
+    'CIN': 'gray',
+    'COL': 'gray',
+    'DET': 'gray',
+    'KCR': 'gray',
+    'LAA': 'gray',
+    'MIA': 'gray',
+    'MIL': 'gray',
+    'MIN': 'gray',
+    'OAK': 'gray',
+    'PIT': 'gray',
+    'SFG': 'gray',
+    'TEX': 'gray',
+    'WSN': 'gray',
+}
+
+# Define labels for the legend
+legend_labels = {
+    'red': 'Won World Series',
+    'yellow': 'Lost World Series',
+    'green': 'Lost Championship Series',
+    'blue': 'Lost Division Series',
+    'purple': 'Lost Wild Card Series',
+    'gray': 'No Postseason Berth'
+}
+
+# Group the data by 'Tm' (team) and calculate the average ERA
+team_eras = data.groupby('Tm')['ERA'].mean()
+
+# Order the teams according to the specified mapping
+team_eras = team_eras.reindex(team_colors.keys())
+
+# Create a bar graph of the average ERAs with custom colors and labels
+plt.figure(figsize=(12, 6))
+ax = team_eras.plot(kind='bar', color=[team_colors[team] for team in team_eras.index], edgecolor='black')
+plt.title('Regular Season Team ERAs with Postseason Outcome (2022)')
+plt.xlabel('Team')
+plt.ylabel('Average ERA')
+
+# Set the y-axis ticks and limits
+plt.yticks(np.arange(0, 8.50, 0.50))  # Increments of 0.50
+plt.ylim(0, 8)  # Limit of 8
+
+plt.xticks(rotation=45)
+
+# Add actual values above each bar
+for i, v in enumerate(team_eras):
+    ax.text(i, v + 0.1, f'{v:.2f}', ha='center', va='bottom', fontsize=8)
+
+# Create a custom legend and move it to the right
+legend_handles = []
+for color, label in legend_labels.items():
+    legend_handles.append(plt.bar(0, 0, color=color, label=label))
+
+plt.legend(handles=legend_handles, loc='upper left', title='Postseason Result', bbox_to_anchor=(1.05, 1))
+
+plt.tight_layout()
+
+# Show the plot
+plt.show()
+```
+
+![Figure_11](https://github.com/seanh824/MLBProject/assets/140123586/685b04a5-b55e-49fe-b2ce-15605da8585b)
+
+The first thing that jumps out at you is the Philadelphia Phillies. Their ERA is so high for a team that won a pennant, further solidifying the narrative that the Phillies overachieved. There is also a clear ERA drop between division series teams and wild card series teams. The average team ERA for division series losers was 4.0075, and 5.60 for wild card series losers - the Phillies team ERA was 6.45. Also, the average ERA of playoff teams is 4.8425, 5.625 for nonplayoff teams. A team that helps drive down the average ERA of playoff teams is the Dodgers. They finished the 2022 regular season with the best team ERA, yet failed to make it out of the NLDS. Of course, this data does not take into account the actual team ERAs in the playoffs, but, other than the Phillies and Dodgers, for better or worse, there is reason to believe a team's regular season performance was a sign of things to come. 
+
+## Average K% by Team with Postseason Outcome
+
+
+
+# References
+
