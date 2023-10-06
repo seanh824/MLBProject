@@ -883,6 +883,9 @@ In conclusion, this data analysis project delved into the 2022 Major League Base
 
 ## References
 Fangraphs Baseball, www.fangraphs.com/. Accessed 6 Oct. 2023. 
+
 “MLB 2022 Payroll Tracker.” Spotrac.Com, www.spotrac.com/mlb/payroll/2022/. Accessed 6 Oct. 2023. 
+
 “MLB Stats, Scores, History, &amp; Records.” Baseball, www.baseball-reference.com/. Accessed 6 Oct. 2023. 
+
 Vinco, Vivo. “2022 MLB Player Stats.” Kaggle, 23 July 2023, www.kaggle.com/datasets/vivovinco/2022-mlb-player-stats. 
