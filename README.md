@@ -1,6 +1,7 @@
 # 2022 MLB Season in Review: Player & Payroll Analysis
 In the ever-evolving world of Major League Baseball, a comprehensive analysis of player statistics is essential to understanding the dynamic performance trends of the game. In this data-driven project, I delve into the statistical prowess of MLB players during the 2022 season. Leveraging a rich dataset comprising of every single player and their batting metrics such as BA, OPS, and OBP, as well as their pitching statistics like ERA, WHIP, and K%, I aim to unravel the standout performers and key insights that defined the season, while accounting for each team's playoff result. To explore the complete dataset, please click [here.](https://www.kaggle.com/datasets/vivovinco/2022-mlb-player-stats) The data was additionally validated to match its source - [baseballamerica.](https://www.baseball-reference.com/) 
 
+
 ## Batting Stats by Age
 In recent years, Major League Baseball has witnessed a transformative shift towards a game that emphasizes youth and athleticism. Teams are increasingly focusing on scouting and developing young talents who bring speed, agility, and dynamic athleticism to the field. This evolution not only enhances the overall excitement of the sport but also underscores the importance of adaptability in a rapidly changing baseball landscape, where younger, more athletic players are driving the future of America's pastime. In order to understand fundamental statistics among differing stages of a player's career the following code was written:
   
@@ -795,7 +796,7 @@ plt.show()
 The first thing that jumps out at you is the Philadelphia Phillies. Their ERA is so high for a team that won a pennant, further solidifying the narrative that the Phillies overachieved. There is also a clear ERA drop between division series teams and wild card series teams. The average team ERA for division series losers was 4.0075, and 5.60 for wild card series losers - the Phillies team ERA was 6.45. Also, the average ERA of playoff teams is 4.8425, 5.625 for nonplayoff teams. A team that helps drive down the average ERA of playoff teams is the Dodgers. They finished the 2022 regular season with the best team ERA, yet failed to make it out of the NLDS. Of course, this data does not take into account the actual team ERAs in the playoffs, but, other than the Phillies and Dodgers, for better or worse, there is reason to believe a team's regular season performance was a sign of things to come. 
 
 ## Average K% by Team with Postseason Outcome
-Intro goes here.
+A team's strikeout percentage for hitters in baseball is important in the regular season because it reflects their ability to make contact with the ball. There is a possibly for an error to occur or the ball finds a hole, which the same cannot be said about a strikeout. It is a guaranteed out. Lower strikeout percentages often correlate with better offensive performance, as they result in more balls in play and potential scoring opportunities. In the playoffs, where runs are crucial, a team with hitters who can limit strikeouts may have an advantage in generating offense and winning crucial games. 
 
 ```python
 import pandas as pd
@@ -874,8 +875,8 @@ plt.show()
 
 ![Figure_12](https://github.com/seanh824/MLBProject/assets/140123586/7b08e11c-efe0-4863-b768-0f21d481fa0b)
 
-Results paragraph here.
+The visualization is an extension of the three true outcomes rates by team, as strikeouts are a third of the equation. There appears to be a drop in K% among playoff teams, an effect also shown in the three true outcomes graph. Oddly enough, the strikeout rates of wild card series teams, other than the Tampa Bay Rays, were mostly on par with the Astros. The Astros strikeout rate is a good index to judge other teams because it is one of the lowest in the league. The fact that the Astros continue to lead the league in lowest strikeout rate year in and year out after the sign-stealing scandal is impressive. 
+
 
 # Summary
-The summary text goes here.
-
+In conclusion, this data analysis project delved into the 2022 Major League Baseball season by examining batting metrics like BA, OPS, and OBP, as well as pitching statistics such as ERA, WHIP, and K%. This analysis also takes into account each team's postseason outcome, offering a holistic view of the dynamic trends within the ever-evolving world of MLB. While the database did incorporate some sabermetrics, including OPS and OPS+, it's important to acknowledge that more advanced statistical measures, such as wRC+, WAR, BABIP, and DRS, are available within the [FanGraphs database](https://www.fangraphs.com/) These advanced metrics offer a deeper and more comprehensive insight into player performance, complementing the analysis and providing a broader perspective on player contributions to their teams.
