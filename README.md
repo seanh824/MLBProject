@@ -795,8 +795,86 @@ plt.show()
 The first thing that jumps out at you is the Philadelphia Phillies. Their ERA is so high for a team that won a pennant, further solidifying the narrative that the Phillies overachieved. There is also a clear ERA drop between division series teams and wild card series teams. The average team ERA for division series losers was 4.0075, and 5.60 for wild card series losers - the Phillies team ERA was 6.45. Also, the average ERA of playoff teams is 4.8425, 5.625 for nonplayoff teams. A team that helps drive down the average ERA of playoff teams is the Dodgers. They finished the 2022 regular season with the best team ERA, yet failed to make it out of the NLDS. Of course, this data does not take into account the actual team ERAs in the playoffs, but, other than the Phillies and Dodgers, for better or worse, there is reason to believe a team's regular season performance was a sign of things to come. 
 
 ## Average K% by Team with Postseason Outcome
+Intro goes here.
 
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
 
+# Define the color mapping for teams
+team_colors = {
+    'HOU': 'red',
+    'PHI': 'yellow',
+    'NYY': 'green',
+    'SDP': 'green',
+    'CLE': 'blue',
+    'ATL': 'blue',
+    'SEA': 'blue',
+    'LAD': 'blue',
+    'TBR': 'purple',
+    'TOR': 'purple',
+    'NYM': 'purple',
+    'STL': 'purple',
+    'ARI': 'gray',
+    'BAL': 'gray',
+    'BOS': 'gray',
+    'CHC': 'gray',
+    'CHW': 'gray',
+    'CIN': 'gray',
+    'COL': 'gray',
+    'DET': 'gray',
+    'KCR': 'gray',
+    'LAA': 'gray',
+    'MIA': 'gray',
+    'MIL': 'gray',
+    'MIN': 'gray',
+    'OAK': 'gray',
+    'PIT': 'gray',
+    'SFG': 'gray',
+    'TEX': 'gray',
+    'WSN': 'gray'
+}
 
-# References
+# Read the CSV file
+file_path = '/Users/seanhughes/Downloads/MLBProjectData/2022_MLB_Player_Stats_Batting.csv'
+data = pd.read_csv(file_path)
+
+# Filter data for players with 100 or more Plate Appearances (PA)
+qualified_players = data[data['PA'] >= 100]
+
+# Calculate strikeout percentage
+qualified_players['Strikeout_Percentage'] = (qualified_players['SO'] / qualified_players['PA']) * 100
+
+# Group data by 'Tm' and calculate the average strikeout percentage for each team
+team_strikeout_avg = qualified_players[qualified_players['Tm'] != 'TOT'].groupby('Tm')['Strikeout_Percentage'].mean()
+
+# Sort teams based on 'Tm'
+sorted_teams = team_colors.keys()
+team_strikeout_avg = team_strikeout_avg.reindex(sorted_teams)
+
+# Create a bar graph
+plt.figure(figsize=(12, 6))
+bars = team_strikeout_avg.plot(kind='bar', color=[team_colors[team] for team in team_strikeout_avg.index])
+
+# Add data values above each bar
+for bar in bars.patches:
+    plt.text(bar.get_x() + bar.get_width() / 2 - 0.1, bar.get_height() + 0.5, f'{bar.get_height():.2f}', fontsize=10)
+
+# Customize the plot
+plt.title('Average Strikeout Percentage by Team in 2022 MLB Season with Postseason Outcome (min. 100 PA)')
+plt.xlabel('Team')
+plt.ylabel('Average Strikeout Percentage')
+plt.xticks(rotation=45)
+plt.yticks(range(0, 27, 2))
+plt.tight_layout()
+
+# Show the plot
+plt.show()
+```
+
+![Figure_12](https://github.com/seanh824/MLBProject/assets/140123586/7b08e11c-efe0-4863-b768-0f21d481fa0b)
+
+Results paragraph here.
+
+## References
 
